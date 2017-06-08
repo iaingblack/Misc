@@ -23,3 +23,14 @@ exec { 'Run bat file':
     logoutput => true,
 }
 ```
+
+### Is machine in a domain?
+```
+notify {"DOMAIN IS - ${domain}":}
+if $domain != undef {
+  notify {"Machine IN domain":}
+} else {
+  notify {"Machine NOT in domain":}
+}
+
+```
