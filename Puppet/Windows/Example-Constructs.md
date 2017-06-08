@@ -13,3 +13,13 @@ exec { 'Mount Network Z Drive if it Does Not Exist':
 }
 ```
 
+### Powershell Running a 'cmd' Command
+Run a local bat file for example
+```
+exec { 'Run bat file':
+    provider  => powershell,
+    cwd       => "C:\\Test",
+    command   => ".\\DoSomething.bat BOTH",
+    logoutput => true,
+}
+```
