@@ -13,6 +13,16 @@ exec { 'Mount Network Z Drive if it Does Not Exist':
 }
 ```
 
+COMPETING EXAMPLE!!!! ABOVE SEEMS BROKEN
+```
+  exec { 'Install ServerSpec RubyGem': 
+    command => 'c:\\Ruby24\\bin\\gem.cmd install serverspec', 
+    unless => '$result = c:\\Ruby24\\bin\\gem.cmd list | findstr serverspec; 
+        if ($result -neq $null) { Exit 1 } else { Exit 0 }',
+    provider => powershell, 
+  }
+```
+
 ### Powershell Running a 'cmd' Command
 Run a local bat file for example
 ```
