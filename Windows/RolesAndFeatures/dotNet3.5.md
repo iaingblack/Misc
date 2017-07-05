@@ -2,7 +2,7 @@
 
 ## Command
 
-To install, you need the 'microsoft-windows-netfx3-ondemand-package.cab ' file from the DVD.
+To install, you need the 'microsoft-windows-netfx3-ondemand-package.cab ' file from the DVD. Either run command below with file or mount DVD prior to install.
 
 ```
 mkdir c:\sources\sxs &&
