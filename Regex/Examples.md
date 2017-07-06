@@ -7,6 +7,11 @@
 ^[a-zA-Z0-9\-\_]+$
 ```
 
+### Windows Hostname/NetBIOS
+```
+^[a-zA-Z0-9-]{1,15}$
+```
+
 ### Verify an IP Address
 ```
 \b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b
