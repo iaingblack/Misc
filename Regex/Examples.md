@@ -12,6 +12,11 @@
 ^[a-zA-Z0-9-]{1,15}$
 ```
 
+### Windows Hostname/NetBIOS With Specific Start String Like 'XYZ-AB' and then 3-8 characters afterwards (14 chars total)
+```
+^[X][Y][Z]*-[A][B]][a-zA-Z0-9-]{3,8}$
+```
+
 ### Verify an IP Address
 ```
 \b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b
