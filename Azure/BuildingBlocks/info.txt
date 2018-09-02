@@ -1,0 +1,21 @@
+3d5b86a9-f2e5-47ec-86bf-6bea5dea8f06
+cloudName
+  {
+    "cloudName": "AzureCloud",
+    "id": "3d5b86a9-f2e5-47ec-86bf-6bea5dea8f06",
+    "isDefault": true,
+    "name": "Visual Studio Professional with MSDN - Iain Black",
+    "state": "Enabled",
+    "tenantId": "250dc80c-ee67-4590-9672-1d4ccde6d471",
+    "user": {
+      "name": "iain.black@moodys.com",
+      "type": "user"
+    }
+
+azbb -g test-azbb -s 3d5b86a9-f2e5-47ec-86bf-6bea5dea8f06 -l northeurope -p tutorial-1.json --deploy
+
+azbb -g Devops-Main -s 3d5b86a9-f2e5-47ec-86bf-6bea5dea8f06 -l northeurope -p tutorial-7.json --deploy
+
+
+
+azbb -s 3d5b86a9-f2e5-47ec-86bf-6bea5dea8f06 -l northeurope -p devops-vmseta.json --deploy
