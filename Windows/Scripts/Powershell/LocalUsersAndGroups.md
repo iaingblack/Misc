@@ -61,3 +61,18 @@ foreach ($localgroup in $localgroups) {
     else { Write-Host "Group '$localgroup' does not exist. Skipping adding users" }
 }
 ```    
+
+Add user/group to remove machines local admin group
+
+```
+$ComputerNames = @("gla-rs5-ria-vm1","gla-rs5-app-vm1","gla-rs5-web-vm1","gla-rs5-sql-vm1")
+
+$DomainName = "ctopad"
+foreach ($computername in $computernames) {
+    $UserName = "RemoteLogin_Rights_Gla-rs5"
+    $computername
+    $AdminGroup = [ADSI]"WinNT://$ComputerName/Administrators,group"
+    $User = [ADSI]"WinNT://$DomainName/$UserName,group"
+    $AdminGroup.Add($User.Path)
+}
+```
