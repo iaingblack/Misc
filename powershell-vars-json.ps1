@@ -4,12 +4,16 @@ $global:var_array_a   = "array_1", "array_2", "array_3"
 $global:var_hashmap_a = @("Ha", "Hb", "Hc")
 
 $jsonObj = Get-Variable -Name var_* | Select-Object -Property Name, Value | ConvertTo-Json
-$hash = @{}
-https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/convertfrom-stringdata?view=powershell-6
-$hash.Add(
-$hash
-#foreach ($property in $jsonObj.PSObject.BaseObject) {
-#    $hash[$property.Name] = $property.Value
-#}
 
-#$jsonObj = Get-Variable -Name var_* | Select-Object -Property Name, Value | ConvertTo-Json
+$allVars = Get-Variable -Name var_* 
+
+$array = @()
+$array += $array + "test1"
+$array += $array + "test2"
+$array |  ConvertTo-Json
+
+$hash = @{}
+foreach ($var in $allVars) {
+    $hash.add($var.Name, $var.Value)
+}
+$hash | ConvertTo-Json | Set-Content -path vars_to_json.json
