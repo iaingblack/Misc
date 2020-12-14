@@ -13,7 +13,7 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
 <?xml version='1.0' encoding='UTF-8'?>
 <domain type='kvm'>
   <name>ESXi</name>
-  <uuid>65b4af7a-a887-85d0-dc31-18a47aadb7ad</uuid>
+  <uuid>800e5239-d742-4a6b-f6c7-024f1b40d952</uuid>
   <metadata>
     <vmtemplate xmlns="unraid" name="Linux" icon="linux.png" os="linux"/>
   </metadata>
@@ -22,24 +22,24 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
   <memoryBacking>
     <nosharepages/>
   </memoryBacking>
-  <vcpu placement='static'>4</vcpu>
+  <vcpu placement='static'>2</vcpu>
   <cputune>
-    <vcpupin vcpu='0' cpuset='4'/>
-    <vcpupin vcpu='1' cpuset='10'/>
-    <vcpupin vcpu='2' cpuset='5'/>
-    <vcpupin vcpu='3' cpuset='11'/>
+    <vcpupin vcpu='0' cpuset='5'/>
+    <vcpupin vcpu='1' cpuset='11'/>
+    <vcpupin vcpu='2' cpuset='4'/>
+    <vcpupin vcpu='3' cpuset='10'/>
   </cputune>
   <os>
     <type arch='x86_64' machine='pc-q35-5.1'>hvm</type>
     <loader readonly='yes' type='pflash'>/usr/share/qemu/ovmf-x64/OVMF_CODE-pure-efi.fd</loader>
-    <nvram>/etc/libvirt/qemu/nvram/65b4af7a-a887-85d0-dc31-18a47aadb7ad_VARS-pure-efi.fd</nvram>
+    <nvram>/etc/libvirt/qemu/nvram/800e5239-d742-4a6b-f6c7-024f1b40d952_VARS-pure-efi.fd</nvram>
   </os>
   <features>
     <acpi/>
     <apic/>
   </features>
   <cpu mode='host-passthrough' check='none' migratable='on'>
-    <topology sockets='1' dies='1' cores='2' threads='2'/>
+    <topology sockets='1' dies='1' cores='1' threads='2'/>
     <cache mode='passthrough'/>
     <feature policy='require' name='topoext'/>
     <feature policy='require' name='vmx'/>
@@ -61,6 +61,12 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
       <boot order='1'/>
       <address type='usb' bus='0' port='1'/>
     </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' cache='writeback'/>
+      <source file='/mnt/cache/VMs/ESXi/vdisk2.img'/>
+      <target dev='hdd' bus='usb'/>
+      <address type='usb' bus='0' port='3'/>
+    </disk>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
       <source file='/mnt/user/Software_and_ISOs/VMWare/vSphere/ESXi_7_U1/VMware-VMvisor-Installer-7.0U1-16850804.x86_64.iso'/>
@@ -78,19 +84,13 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
     </controller>
     <controller type='usb' index='0' model='ich9-uhci2'>
       <master startport='2'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x1' multifunction='on'/>
     </controller>
     <controller type='usb' index='0' model='ich9-uhci3'>
       <master startport='4'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x2'/>
     </controller>
-    <controller type='sata' index='0'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
-    </controller>
     <controller type='pci' index='0' model='pcie-root'/>
-    <controller type='virtio-serial' index='0'>
-      <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
-    </controller>
     <controller type='pci' index='1' model='pcie-root-port'>
       <model name='pcie-root-port'/>
       <target chassis='1' port='0x10'/>
@@ -111,8 +111,14 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
       <target chassis='4' port='0x13'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/>
     </controller>
+    <controller type='virtio-serial' index='0'>
+      <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
+    </controller>
+    <controller type='sata' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+    </controller>
     <interface type='bridge'>
-      <mac address='52:54:00:ad:62:e0'/>
+      <mac address='52:54:00:16:25:87'/>
       <source bridge='br0'/>
       <model type='vmxnet3'/>
       <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
@@ -134,7 +140,7 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
     </input>
     <input type='mouse' bus='ps2'/>
     <input type='keyboard' bus='ps2'/>
-    <graphics type='vnc' port='-1' autoport='yes' websocket='-1' listen='0.0.0.0' keymap='en-gb'>
+    <graphics type='vnc' port='-1' autoport='yes' websocket='-1' listen='0.0.0.0' keymap='en-us'>
       <listen type='address' address='0.0.0.0'/>
     </graphics>
     <video>
