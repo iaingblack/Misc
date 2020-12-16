@@ -7,7 +7,7 @@ kernel /bzimage
 append pcie_acs_override=downstream initrd=/bzroot kvm_amd.nested=1
 ```
 
-The VM Config. Main disk is ```USB```  disk to install ESXi on (16GB), an IDE disk (100GB in my case), network is ```VMXNET3``` and add ```<feature policy='require' name='vmx'/>```
+The VM Config. i440fx-5.1 Machine, SeaBIOS BIOS, disk to install ESXi on (16GB) is USB, a SATA disk (100GB in my case), network is ```VMXNET3``` and add ```<feature policy='require' name='vmx'/>```
 
 ```xml
 <?xml version='1.0' encoding='UTF-8'?>
