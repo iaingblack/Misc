@@ -7,13 +7,13 @@ kernel /bzimage
 append pcie_acs_override=downstream initrd=/bzroot kvm_amd.nested=1
 ```
 
-The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feature policy='require' name='vmx'/>```
+The VM Config. Main disk is ```USB```  disk to install ESXi on (16GB), an IDE disk (100GB in my case), network is ```VMXNET3``` and add ```<feature policy='require' name='vmx'/>```
 
 ```xml
 <?xml version='1.0' encoding='UTF-8'?>
-<domain type='kvm' id='18'>
-  <name>ESXi</name>
-  <uuid>800e5239-d742-4a6b-f6c7-024f1b40d952</uuid>
+<domain type='kvm' id='34'>
+  <name>ESXi-7</name>
+  <uuid>86c84f99-c87f-cbe2-5d64-4fb54909291b</uuid>
   <metadata>
     <vmtemplate xmlns="unraid" name="Linux" icon="linux.png" os="linux"/>
   </metadata>
@@ -22,25 +22,25 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
   <memoryBacking>
     <nosharepages/>
   </memoryBacking>
-  <vcpu placement='static'>2</vcpu>
+  <vcpu placement='static'>4</vcpu>
   <cputune>
-    <vcpupin vcpu='0' cpuset='5'/>
-    <vcpupin vcpu='1' cpuset='11'/>
+    <vcpupin vcpu='0' cpuset='0'/>
+    <vcpupin vcpu='1' cpuset='6'/>
+    <vcpupin vcpu='2' cpuset='1'/>
+    <vcpupin vcpu='3' cpuset='7'/>
   </cputune>
   <resource>
     <partition>/machine</partition>
   </resource>
   <os>
-    <type arch='x86_64' machine='pc-q35-5.1'>hvm</type>
-    <loader readonly='yes' type='pflash'>/usr/share/qemu/ovmf-x64/OVMF_CODE-pure-efi.fd</loader>
-    <nvram>/etc/libvirt/qemu/nvram/800e5239-d742-4a6b-f6c7-024f1b40d952_VARS-pure-efi.fd</nvram>
+    <type arch='x86_64' machine='pc-i440fx-1.4'>hvm</type>
   </os>
   <features>
     <acpi/>
     <apic/>
   </features>
   <cpu mode='host-passthrough' check='none' migratable='on'>
-    <topology sockets='1' dies='1' cores='2' threads='1'/>
+    <topology sockets='1' dies='1' cores='2' threads='2'/>
     <cache mode='passthrough'/>
     <feature policy='require' name='topoext'/>
     <feature policy='require' name='vmx'/>
@@ -57,30 +57,30 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
     <emulator>/usr/local/sbin/qemu</emulator>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='writeback'/>
-      <source file='/mnt/cache/VMs/ESXi/vdisk1.img' index='3'/>
+      <source file='/mnt/cache/VMs/ESXi-7/vdisk1.img' index='3'/>
       <backingStore/>
       <target dev='hdc' bus='usb'/>
       <boot order='1'/>
       <alias name='usb-disk2'/>
       <address type='usb' bus='0' port='1'/>
     </disk>
-    <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2' cache='writeback'/>
-      <source file='/mnt/cache/VMs/ESXi/vdisk2.img' index='2'/>
-      <backingStore/>
-      <target dev='hdd' bus='usb'/>
-      <alias name='usb-disk3'/>
-      <address type='usb' bus='0' port='3'/>
-    </disk>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
-      <source file='/mnt/user/Software_and_ISOs/VMWare/vSphere/ESXi_7_U1/VMware-VMvisor-Installer-7.0U1-16850804.x86_64.iso' index='1'/>
+      <source file='/mnt/user/Software_and_ISOs/VMware-VMvisor-Installer-7.0U1-16850804.x86_64.iso' index='2'/>
       <backingStore/>
-      <target dev='hda' bus='sata'/>
+      <target dev='hda' bus='ide' tray='open'/>
       <readonly/>
       <boot order='2'/>
-      <alias name='sata0-0-0'/>
+      <alias name='ide0-0-0'/>
       <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' cache='writeback'/>
+      <source file='/mnt/cache/VMs/ESXi-7/vdisk2.img' index='1'/>
+      <backingStore/>
+      <target dev='hdd' bus='ide'/>
+      <alias name='ide0-1-1'/>
+      <address type='drive' controller='0' bus='1' target='0' unit='1'/>
     </disk>
     <controller type='usb' index='0' model='ich9-ehci1'>
       <alias name='usb'/>
@@ -94,55 +94,31 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
     <controller type='usb' index='0' model='ich9-uhci2'>
       <alias name='usb'/>
       <master startport='2'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x1' multifunction='on'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x1'/>
     </controller>
     <controller type='usb' index='0' model='ich9-uhci3'>
       <alias name='usb'/>
       <master startport='4'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x2'/>
     </controller>
-    <controller type='pci' index='0' model='pcie-root'>
-      <alias name='pcie.0'/>
+    <controller type='pci' index='0' model='pci-root'>
+      <alias name='pci.0'/>
     </controller>
-    <controller type='pci' index='1' model='pcie-root-port'>
-      <model name='pcie-root-port'/>
-      <target chassis='1' port='0x10'/>
-      <alias name='pci.1'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0' multifunction='on'/>
-    </controller>
-    <controller type='pci' index='2' model='pcie-root-port'>
-      <model name='pcie-root-port'/>
-      <target chassis='2' port='0x11'/>
-      <alias name='pci.2'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x1'/>
-    </controller>
-    <controller type='pci' index='3' model='pcie-root-port'>
-      <model name='pcie-root-port'/>
-      <target chassis='3' port='0x12'/>
-      <alias name='pci.3'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x2'/>
-    </controller>
-    <controller type='pci' index='4' model='pcie-root-port'>
-      <model name='pcie-root-port'/>
-      <target chassis='4' port='0x13'/>
-      <alias name='pci.4'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/>
+    <controller type='ide' index='0'>
+      <alias name='ide'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
     </controller>
     <controller type='virtio-serial' index='0'>
       <alias name='virtio-serial0'/>
-      <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
-    </controller>
-    <controller type='sata' index='0'>
-      <alias name='ide'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
     </controller>
     <interface type='bridge'>
-      <mac address='52:54:00:16:25:87'/>
+      <mac address='52:54:00:80:f4:4b'/>
       <source bridge='br0'/>
       <target dev='vnet0'/>
       <model type='vmxnet3'/>
       <alias name='net0'/>
-      <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
     </interface>
     <serial type='pty'>
       <source path='/dev/pts/0'/>
@@ -157,7 +133,7 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
       <alias name='serial0'/>
     </console>
     <channel type='unix'>
-      <source mode='bind' path='/var/lib/libvirt/qemu/channel/target/domain-18-ESXi/org.qemu.guest_agent.0'/>
+      <source mode='bind' path='/var/lib/libvirt/qemu/channel/target/domain-34-ESXi-7/org.qemu.guest_agent.0'/>
       <target type='virtio' name='org.qemu.guest_agent.0' state='disconnected'/>
       <alias name='channel0'/>
       <address type='virtio-serial' controller='0' bus='0' port='1'/>
@@ -178,11 +154,11 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
     <video>
       <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/>
       <alias name='video0'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
     </video>
     <memballoon model='virtio'>
       <alias name='balloon0'/>
-      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
     </memballoon>
   </devices>
   <seclabel type='dynamic' model='dac' relabel='yes'>
@@ -190,6 +166,4 @@ The VM Config. Main disk is ```USB```, network is ```VMXNET3``` and add ```<feat
     <imagelabel>+0:+100</imagelabel>
   </seclabel>
 </domain>
-
-
 ```
