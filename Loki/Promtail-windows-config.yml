@@ -1,0 +1,46 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+ 
+positions:
+  filename: ./positions.yaml
+ 
+clients:
+  - url: http://localhost:3100/loki/api/v1/push
+ 
+scrape_configs:
+- job_name: grafana
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: grafana
+      host: winbuildserver
+      __path__: C:\Program Files\GrafanaLabs\grafana\data\log\*.log
+
+- job_name: Octopus
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: octopus
+      host: winbuildserver
+      __path__: C:\Octopus\Logs\*.txt
+      
+- job_name: Chocolatey
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: chocolatey
+      host: winbuildserver
+      __path__: C:\ProgramData\chocolatey\logs\*.log
+      
+- job_name: windows
+  windows_events:
+    use_incoming_timestamp: false
+    bookmark_path: "./bookmark.xml"
+    eventlog_name: "Application"
+    xpath_query: '*'
+    labels:
+      job: windows
